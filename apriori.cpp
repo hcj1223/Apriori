@@ -9,8 +9,9 @@ void Apriori::read_data_base(string fileName)
     ifstream infile;
     infile.open(fileName);
     string line;
+
     int i = 0;
-    C.push_back(set<set<int>>());
+    unordered_map<int, int> C;    // 用一组对应关系代替C0
     while (getline(infile, line)) // 读取文件中的每一行
     {
         dataBase.push_back(unordered_map<int, bool>());
@@ -21,15 +22,18 @@ void Apriori::read_data_base(string fileName)
             else
             {
                 dataBase[i].insert(make_pair(num, true)); // 遇到空格就将数字加入dataBase
-                set<int> temp;
-                temp.insert(num);
-                C[0].insert(temp); // 加入C
+                if (C.find(num) == C.end())               // 第一次出现该数字
+                    C.insert(make_pair(num, 1));
+                else
+                    C[num]++;
                 num = 0;
             }
         i++;
     }
     infile.close();
+
     this->dataBase = dataBase;
+    this->C0 = C;
 }
 void Apriori::set_min_support(int minSupport)
 {
@@ -40,34 +44,13 @@ void Apriori::run_apriori()
 {
     // 由C[0]生成L[0]
     L.push_back(set<set<int>>());
-    vector<apriorNode> table;
-    for (auto it : C[0])
-    {
-        apriorNode temp;
-        temp.candidate = it, temp.cnt = 0;
-        table.push_back(temp);
-    }
-    for (int i = 0; i < dataBase.size(); i++)
-    {
-        for (int ii = 0; ii < table.size(); ii++)
-        {
-            bool flag = 1;
-            for (auto it : table[ii].candidate)
-                if (dataBase[i].find(it) == dataBase[i].end()) // 候选项的每个元素在数据集中不存在
-                {
-                    flag = 0;
-                    break;
-                }
-            if (flag) // 数据集的该行包含该候选项
-                table[ii].cnt++;
-        }
-    }
-    for (int i = 0; i < table.size(); i++)
-        if (table[i].cnt >= minSupport)
-            L[0].insert(table[i].candidate);
+    for (auto it : C0)
+        if (it.second >= minSupport)
+            L[0].insert(set<int>({it.first}));
 
     int k = 0;
-    while (L[k].size() > 1)
+    C.push_back(set<set<int>>());
+    while (L[k].size() > 1) // 如果L[k]中只有一个频繁项集，则无法生成C[k+1]
     {
         // 生成C[k+1]
         C.push_back(set<set<int>>());
