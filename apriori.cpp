@@ -56,12 +56,37 @@ void Apriori::run_apriori()
         C.push_back(set<set<int>>());
         for (auto it = L[k].begin(); it != L[k].end(); it++)
         {
-            for (auto it2 = it; it2 != L[k].end(); it2++)
+            for (auto it2 = next(it); it2 != L[k].end(); it2++)
             {
                 set<int> temp = *it;
-                temp.insert((*it2).begin(), (*it2).end());
+                temp.insert((*it2).begin(), (*it2).end()); // 自连接
                 if (temp.size() == k + 2)
-                    C[k + 1].insert(temp);
+                {
+                    // 修剪
+                    bool Flag = 1;        // 判断temp是否满足条件
+                    for (auto it3 : temp) // 排除一个元素
+                    {
+                        set<int> subSet; // temp的子集
+                        for (auto it4 : temp)
+                            if (it4 != it3)
+                                subSet.insert(it4);
+
+                        bool flag = 0; // 判断子集是否在L[k]中
+                        for (auto it5 : L[k])
+                            if (subSet == it5)
+                            {
+                                flag = 1;
+                                break;
+                            }
+                        if (!flag)
+                        {
+                            Flag = 0;
+                            break;
+                        }
+                    }
+                    if (Flag)
+                        C[k + 1].insert(temp);
+                }
             }
         }
 
@@ -97,7 +122,7 @@ void Apriori::run_apriori()
 }
 void Apriori::print_apriori_res()
 {
-    // 测试数据集是否正确读入
+    /* // 测试数据集是否正确读入
     cout << "数据集: " << endl;
     for (int i = 0; i < dataBase.size(); i++)
     {
@@ -113,13 +138,15 @@ void Apriori::print_apriori_res()
 
     // 测试C是否正确生成
     cout << "候选项集C: " << endl;
-    for (int i = 0; i < C.size(); i++)
+    for (int i = 1; i < C.size(); i++)
     {
+        cout << "C[" << i + 1 << "]: " << endl;
         for (auto &it : C[i])
         {
+            cout << "{ ";
             for (auto &it2 : it)
                 cout << it2 << " ";
-            cout << endl;
+            cout << "}" << endl;
         }
     }
     cout << endl;
@@ -128,15 +155,19 @@ void Apriori::print_apriori_res()
     cout << "频繁项集L: " << endl;
     for (int i = 0; i < L.size(); i++)
     {
+        cout << "L[" << i + 1 << "]: " << endl;
         for (auto &it : L[i])
         {
+            cout << "{ ";
             for (auto &it2 : it)
                 cout << it2 << " ";
-            cout << endl;
+            cout << "}" << endl;
         }
     }
+    cout << endl; */
 
     cout << "频繁项集L的元素个数: " << endl;
     for (int i = 0; i < L.size(); i++)
-        cout << "L[" << i + 1 << "]: " << L[i].size() << endl;
+        if (L[i].size() > 0)
+            cout << "L[" << i + 1 << "]: " << L[i].size() << endl;
 }
