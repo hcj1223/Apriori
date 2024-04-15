@@ -1,9 +1,12 @@
 #ifndef APRIORI_H
 #define APRIORI_H
+
 #include <vector>
 #include <string>
+#include <unordered_set>
 #include <set>
 #include <unordered_map>
+#include <map>
 using namespace std;
 
 struct apriorNode
@@ -14,11 +17,11 @@ struct apriorNode
 class Apriori
 {
 private:
-    vector<unordered_map<int, bool>> dataBase; // 数据集
-    int minSupport;                            // 最小支持度
-    unordered_map<int, int> C0;                // 用一组对应关系代替C0
-    vector<set<set<int>>> C;                   // 候选项集，C[0]为空，用C0表示
-    vector<set<set<int>>> L;                   // 频繁项集
+    vector<unordered_set<int>> dataBase; // 数据集
+    int minSupport;                      // 最小支持度
+    map<int, int> C0;                    // 用一组对应关系代替C0
+    vector<vector<set<int>>> C;          // 候选项集，C[0]为空，用C0表示
+    vector<vector<set<int>>> L;          // 频繁项集
 
 public:
     void read_data_base(string fileName); // 读取数据集
