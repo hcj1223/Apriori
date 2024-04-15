@@ -3,25 +3,22 @@
 
 #include <vector>
 #include <string>
-#include <unordered_set>
-#include <set>
-#include <unordered_map>
 #include <map>
 using namespace std;
 
 struct apriorNode
 {
-    set<int> candidate; // 候选项
-    int cnt;            // 候选项出现次数
+    vector<int> candidate; // 候选项
+    int cnt;               // 候选项出现次数
 };
 class Apriori
 {
 private:
-    vector<unordered_set<int>> dataBase; // 数据集
-    int minSupport;                      // 最小支持度
-    map<int, int> C0;                    // 用一组对应关系代替C0
-    vector<vector<set<int>>> C;          // 候选项集，C[0]为空，用C0表示
-    vector<vector<set<int>>> L;          // 频繁项集
+    vector<vector<int>> dataBase;  // 数据集
+    int minSupport;                // 最小支持度
+    map<int, int> C0;              // 用一组对应关系代替C0
+    vector<vector<vector<int>>> C; // 候选项集，C[0]为空，用C0表示
+    vector<vector<vector<int>>> L; // 频繁项集
 
 public:
     void read_data_base(string fileName); // 读取数据集
